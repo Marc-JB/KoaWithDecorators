@@ -13,19 +13,18 @@ Experimental library for using Koa with decorators
 * Add `@types/koa__router` in your `devDependencies` when using Typescript
 
 ## Decorators
-decorator | type | required | description
---- | --- | --- | ---
-@HttpGet | method | yes | Listen for HTTP GET requests
-@HttpPost | method | yes | Listen for HTTP POST requests
-@HttpPut | method | yes | Listen for HTTP PUT requests
-@HttpPatch | method | yes | Listen for HTTP PATCH requests
-@HttpDelete | method | yes | Listen for HTTP DELETE requests
-@HttpOptions | method | yes | Listen for HTTP OPTIONS requests
-@HttpHead | method | yes | Listen for HTTP HEAD requests
-@HttpAll | method | only if @Path is not set | Listen for all HTTP requests
-@Path(path: string) | method | no (default path is `/`) | Attaches the method to the specified path
-@Endpoint(path: string) | class | no (default path is `/`) | Adds a prefix to all paths in this method
-@ApiController(path: string) | class | no (default path is `/`) | Same as @Endpoint
+decorator | type | required | aliases | description
+--- | --- | --- | --- | ---
+@HttpGet | method | yes | @GET | Listen for HTTP GET requests
+@HttpPost | method | yes | @POST | Listen for HTTP POST requests
+@HttpPut | method | yes | @PUT | Listen for HTTP PUT requests
+@HttpPatch | method | yes | @PATCH | Listen for HTTP PATCH requests
+@HttpDelete | method | yes | @DELETE | Listen for HTTP DELETE requests
+@HttpOptions | method | yes | @OPTIONS | Listen for HTTP OPTIONS requests
+@HttpHead | method | yes | @HEAD | Listen for HTTP HEAD requests
+@HttpAll | method | only if @Path is not set |  | Listen for all HTTP requests
+@Path(path: string) | method | no (default path is `/`) |  | Attaches the method to the specified path
+@Endpoint(path: string) | class | no (default path is `/`) | @ApiController(path: string) | Adds a prefix to all paths in this method
 
 ## Demo
 ```TypeScript
