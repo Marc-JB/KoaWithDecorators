@@ -50,24 +50,31 @@ const HttpMethod: (name: string) => MethodDecorator = (name) => (target, propert
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpGet: MethodDecorator = HttpMethod("GET")
+export const GET: MethodDecorator = HttpMethod("GET")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpPost: MethodDecorator = HttpMethod("POST")
+export const POST: MethodDecorator = HttpMethod("POST")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpPut: MethodDecorator = HttpMethod("PUT")
+export const PUT: MethodDecorator = HttpMethod("PUT")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpPatch: MethodDecorator = HttpMethod("PATCH")
+export const PATCH: MethodDecorator = HttpMethod("PATCH")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpDelete: MethodDecorator = HttpMethod("DELETE")
+export const DELETE: MethodDecorator = HttpMethod("DELETE")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpOptions: MethodDecorator = HttpMethod("OPTIONS")
+export const OPTIONS: MethodDecorator = HttpMethod("OPTIONS")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpHead: MethodDecorator = HttpMethod("HEAD")
+export const HEAD: MethodDecorator = HttpMethod("HEAD")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const HttpAll: MethodDecorator = HttpMethod("*")
