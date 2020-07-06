@@ -31,7 +31,7 @@ class PetsController {
 const myPets: Pet[] = [{ id: 1, name: "Maya", kind: "Macaw" }]
 
 @suite
-export class AsyncUtilsTests {
+export class MainTests {
     @test
     public testDecorators(): void {
         // Assert
