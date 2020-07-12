@@ -9,7 +9,7 @@
 Experimental library for using Koa with decorators
 
 ## Notes
-* Make sure to enable the `experimentalDecorators` (and preferably `emitDecoratorMetadata`) flag(s) in your `tsconfig.json`
+* Make sure to enable and set the `experimentalDecorators` flag tot true in your `tsconfig.json`
 * Add `@types/koa__router` in your `devDependencies` when using Typescript
 
 ## Decorators
