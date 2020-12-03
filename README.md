@@ -6,10 +6,10 @@
 ![node version](https://badgen.net/npm/node/@peregrine/koa-with-decorators)
 ![types](https://badgen.net/npm/types/@peregrine/koa-with-decorators?icon=typescript)
 # Koa with decorators
-Experimental library for using Koa with decorators
+Library for using Koa with decorators
 
 ## Notes
-* Make sure to enable the `experimentalDecorators` (and preferably `emitDecoratorMetadata`) flag(s) in your `tsconfig.json`
+* Make sure to enable and set the `experimentalDecorators` flag tot true in your `tsconfig.json`
 * Add `@types/koa__router` in your `devDependencies` when using Typescript
 
 ## Decorators
