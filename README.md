@@ -6,7 +6,7 @@
 ![node version](https://badgen.net/npm/node/@peregrine/koa-with-decorators)
 ![types](https://badgen.net/npm/types/@peregrine/koa-with-decorators?icon=typescript)
 # Koa with decorators
-Experimental library for using Koa with decorators
+Library for using Koa with decorators
 
 ## Notes
 * Make sure to enable and set the `experimentalDecorators` flag tot true in your `tsconfig.json`

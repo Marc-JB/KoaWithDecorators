@@ -6,7 +6,7 @@ interface Route {
 }
 
 interface EndpointInt {
-    routes?: Map<string, Route>
+    routes?: Map<string | symbol, Route>
     path?: string
 }
 
@@ -22,8 +22,8 @@ function getEndpoint(constructor: Function): Endpoint {
     return constructor as unknown as Endpoint
 }
 
-function addRouteMethodToEndpoint(id: string, method: string, endpoint: Endpoint): void {
-    const routes = endpoint.routes ?? new Map<string, Route>()
+function addRouteMethodToEndpoint(id: string | symbol, method: string, endpoint: Endpoint): void {
+    const routes = endpoint.routes ?? new Map<string | symbol, Route>()
 
     const route = routes.get(id) ?? {}
     route.method = method
@@ -32,8 +32,8 @@ function addRouteMethodToEndpoint(id: string, method: string, endpoint: Endpoint
     endpoint.routes = routes
 }
 
-function addRoutePathToEndpoint(id: string, path: string, endpoint: Endpoint): void {
-    const routes = endpoint.routes ?? new Map<string, Route>()
+function addRoutePathToEndpoint(id: string | symbol, path: string, endpoint: Endpoint): void {
+    const routes = endpoint.routes ?? new Map<string | symbol, Route>()
 
     const route = routes.get(id) ?? {}
     route.path = path
@@ -44,8 +44,7 @@ function addRoutePathToEndpoint(id: string, path: string, endpoint: Endpoint): v
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const HttpMethod: (name: string) => MethodDecorator = (name) => (target, propertyKey, _): void => {
-    const key = typeof propertyKey === "string" ? propertyKey : propertyKey.toString()
-    addRouteMethodToEndpoint(key, name.toUpperCase(), getEndpoint(target.constructor))
+    addRouteMethodToEndpoint(propertyKey, name.toUpperCase(), getEndpoint(target.constructor))
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -81,8 +80,7 @@ export const HttpAll: MethodDecorator = HttpMethod("*")
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const Path: (name: string) => MethodDecorator = (name) => (target, propertyKey, _): void => {
-    const key = typeof propertyKey === "string" ? propertyKey : propertyKey.toString()
-    addRoutePathToEndpoint(key, name, getEndpoint(target.constructor))
+    addRoutePathToEndpoint(propertyKey, name, getEndpoint(target.constructor))
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -93,7 +91,7 @@ export const Endpoint: (name: string) => ClassDecorator = (name) => (constructor
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const ApiController: (name: string) => ClassDecorator = Endpoint
 
-function addRoutesToRouter(router: Router, routes: Map<string, Route>, instance: any): Router {
+function addRoutesToRouter(router: Router, routes: Map<string | symbol, Route>, instance: any): Router {
     for (const [id, { path = "/", method = "*" }] of routes) {
         const func = (...args: any[]): any => instance[id](...args)
         switch (method) {
@@ -130,7 +128,7 @@ function addRoutesToRouter(router: Router, routes: Map<string, Route>, instance:
                 break
             }
             default: {
-                throw new Error(`${id} | ${path}: Method ${method} not supported`)
+                throw new Error(`${id.toString()} | ${path}: Method ${method} not supported`)
             }
         }
     }
@@ -144,7 +142,7 @@ export const createRouter = <T>(target: ConstructorType<T>, instance: T): Router
     const router = new Router({
         prefix: path.startsWith("/") ? path : "/" + path
     })
-    const routes = endpoint.routes ?? new Map<string, Route>()
+    const routes = endpoint.routes ?? new Map<string | symbol, Route>()
 
     return addRoutesToRouter(router, routes, instance)
 }
