@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { addRouteMetadataToEndpoint, getEndpoint } from "../core"
-import { FunctionKeys } from "../types"
+import { getEndpoint } from "../../../core/getEndpoint"
+import { addRouteMetadataToEndpoint } from "../../../core/addRouteMetadataToEndpoint"
+import { FunctionKeys } from "../../../types"
 
 const timeFactors = {
     seconds: 1,
     minutes: 60,
-    hour: 60 * 60,
+    hours: 60 * 60,
     days: 24 * 60 * 60,
     weeks: 7 * 24 * 60 * 60
 }

@@ -1,24 +1,5 @@
 import Router from "@koa/router"
-import { Endpoint, InferConstructorType, Route, FunctionKeys } from "./types"
-
-export function getEndpoint<T extends new (...args: any[]) => Object>(constructor: Function): Endpoint<T> {
-    return constructor as unknown as Endpoint<T>
-}
-
-export function addRouteMetadataToEndpoint<T extends new (...args: any[]) => Object, K extends keyof Route>(
-    key: K, 
-    data: Route[typeof key], 
-    endpoint: Endpoint<T>,
-    id: FunctionKeys<T>, 
-): void {
-    const routes = endpoint.routes ?? new Map<FunctionKeys<T>, Route>()
-
-    const route = routes.get(id) ?? {}
-    route[key] = data
-    routes.set(id, route)
-
-    endpoint.routes = routes
-}
+import { InferConstructorType, Route, FunctionKeys } from "../types"
 
 export function addRoutesToRouter<
     T extends new (...args: any[]) => Object, 
@@ -28,10 +9,18 @@ export function addRoutesToRouter<
     routes: Map<FunctionKeys<T>, Route>, 
     instance: R
 ): Router {
-    for (const [id, { path = "/", method = "*", defaultStatusCode = null, cachedFor = null }] of routes) {
+    for (const [
+        id, 
+        { 
+            path = "/", 
+            method = "*", 
+            defaultStatusCode = null, 
+            cachedFor = null,
+            download = false,
+        }] of routes) {
         
-        const func: Router.Middleware = (context, ...rest): any => {
-            if (defaultStatusCode !== null) {
+        const func: Router.Middleware = async (context, ...rest): Promise<any> => {
+            if (defaultStatusCode !== null && defaultStatusCode !== "auto") {
                 context.response.status = defaultStatusCode
             }
 
@@ -42,8 +31,30 @@ export function addRoutesToRouter<
                 context.response.set("Expires", now.toUTCString())
             }
 
-            // @ts-expect-error
-            return instance[id](context, ...rest)
+            if (download !== false) {
+                context.response.set("Content-Disposition", "attachment" + typeof download === "string" ? `; filename="${download}"` : "")
+            }
+
+            try {
+                // @ts-expect-error
+                const response = await instance[id](context, ...rest)
+
+                if (defaultStatusCode === "auto") {
+                    if (method === "POST")
+                        context.response.status = 201
+                    else if (response === null || response === undefined) 
+                        context.response.status = 204
+                    else
+                        context.response.status = 200
+                }
+
+                return response
+            } catch (error) {
+                if (defaultStatusCode === "auto")
+                    context.response.status = 500
+
+                throw error
+            }
         }
 
         switch (method) {

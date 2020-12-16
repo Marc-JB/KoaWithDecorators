@@ -1,8 +1,9 @@
 export interface Route {
     method?: string
     path?: string
-    defaultStatusCode?: number
+    defaultStatusCode?: number | "auto"
     cachedFor?: number
+    download?: boolean | string
 }
 
 export type ConstructorType<T extends Object> = new (...args: any[]) => T

@@ -1,34 +1,14 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import Router from "@koa/router"
-import { addRoutesToRouter, getEndpoint } from "./core"
+import { getEndpoint } from "./core/getEndpoint"
+import { addRoutesToRouter } from "./core/addRoutesToRouter"
 import { Route, InferConstructorType, FunctionKeys } from "./types"
 
-export * from "./decorators/httpMethods"
-export * from "./decorators/path"
-export * from "./decorators/statusCode"
-export * from "./decorators/cache"
-
-interface ControllerDecoratorType {
-    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    (name: string): (<TFunction extends Function>(target: TFunction) => TFunction | void)
-
-    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    <TFunction extends Function>(target: TFunction): TFunction | void
-}
-
-export const Controller: ControllerDecoratorType = (nameOrConstructor: any): any => {
-    if (typeof nameOrConstructor === "string") {
-        return (constructor: any): void => {
-            getEndpoint(constructor).path = nameOrConstructor
-        }
-    } else getEndpoint(nameOrConstructor).path = "/"
-}
-
-/** @deprecated use Controller */
-export const ApiController = Controller
-
-/** @deprecated use Controller */
-export const Endpoint = Controller
+export * from "./decorators/routes/request/httpMethods"
+export * from "./decorators/routes/request/path"
+export * from "./decorators/routes/response/statusCode"
+export * from "./decorators/routes/response/download"
+export * from "./decorators/routes/response/cache"
+export * from "./decorators/class/controller"
 
 export const createRouter = <
     T extends new (...args: any[]) => Object, 
