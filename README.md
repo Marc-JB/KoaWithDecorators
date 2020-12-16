@@ -9,8 +9,7 @@
 Library for using Koa with decorators
 
 ## Notes
-* Make sure to enable and set the `experimentalDecorators` flag tot true in your `tsconfig.json`
-* Add `@types/koa__router` in your `devDependencies` when using Typescript
+* Make sure to enable and set the `experimentalDecorators` flag to `true` in your `tsconfig.json`
 
 ## Decorators
 decorator | type | required | aliases | description
@@ -24,13 +23,14 @@ decorator | type | required | aliases | description
 @HttpHead | method | yes | @HEAD | Listen for HTTP HEAD requests
 @HttpAll | method | only if @Path is not set |  | Listen for all HTTP requests
 @Path(path: string) | method | no (default path is `/`) |  | Attaches the method to the specified path
-@Endpoint(path: string) | class | no (default path is `/`) | @ApiController(path: string) | Adds a prefix to all paths in this method
+@Controller(path: string) | class | no (default path is `/`) | @ApiController(path: string) | Adds a prefix to all paths in this method
 
 ## Demo
 ```TypeScript
-import { HttpGet, Path, Endpoint, createRouter } from "@peregrine/koa-with-decorators"
+import { HttpGet, HttpPost, Path, Controller, createRouter, DefaultStatusCode, CachedFor } from "@peregrine/koa-with-decorators"
 import Koa, { Context } from "koa"
 import Router from "@koa/router"
+import bodyParser from "koa-bodyparser"
 
 interface Pet {
     id: number
@@ -38,32 +38,50 @@ interface Pet {
     kind: string
 }
 
-@Endpoint("pets")
+@Controller("pets")
 class PetsController {
     public constructor(private readonly petsList: Pet[]) {}
 
     @HttpGet
-    public getAllPets(ctx: Context): void {
-        ctx.response.status = 200
-        ctx.response.body = JSON.stringify(this.petsList, undefined, 4)
+    @DefaultStatusCode(200)
+    @CachedFor(4, "minutes")
+    public getAllPets({ response }: Context): void {
+        response.body = this.petsList
     }
 
     @HttpGet
     @Path("/:id")
+    @DefaultStatusCode(200)
+    @CachedFor(4, "minutes")
     public getPetById(ctx: Context): void {
-        const { id } = ctx.params
-        const pet = this.petsList.find(it => it.id == parseInt(id)) ?? null
-        ctx.response.status = pet === null ? 404 : 200
-        if (pet !== null) ctx.response.body = JSON.stringify(pet, undefined, 4)
+        const petId = parseInt(ctx.params.id)
+        const pet = this.petsList.find(it => it.id === petId) ?? null
+
+        if (pet !== null) {
+            ctx.response.body = pet
+        } else {
+            ctx.response.status = 404
+        }
+    }
+
+    @HttpPost
+    @DefaultStatusCode(201)
+    public addPet(ctx: Context): void {
+        const newPet = ctx.request.body
+        this.petsList.add(newPet)
+        ctx.response.body = newPet
     }
 }
 
 const myPets: Pet[] = [{ id: 1, name: "Maya", kind: "Macaw" }]
 
-const petsRouter: Router = createRouter(PetsController, new PetsController(myPets))
+const petsRouter: Router = createRouter(new PetsController(myPets))
 
 const koa = new Koa()
+koa.use(bodyParser())
+
 koa.use(petsRouter.routes())
 koa.use(petsRouter.allowedMethods())
+
 koa.listen(8080)
 ```
