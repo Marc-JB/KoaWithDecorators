@@ -1,5 +1,5 @@
 import { suite, test, expect } from "@peregrine/test-with-decorators"
-import { HttpGet, Path, Endpoint, createRouter } from "../main/index"
+import { HttpGet, Path, Controller, createRouter } from "../main/index"
 import { Context } from "koa"
 
 interface Pet {
@@ -8,7 +8,7 @@ interface Pet {
     kind: string
 }
 
-@Endpoint("pets")
+@Controller("pets")
 class PetsController {
     public constructor(private readonly petsList: Pet[]) {}
 
@@ -53,7 +53,7 @@ export class MainTests {
         const instance = new PetsController(myPets)
 
         // Act
-        const petsRouter = createRouter(PetsController, instance)
+        const petsRouter = createRouter(instance)
 
         // Assert
         expect(petsRouter.stack).to.have.lengthOf(2)
