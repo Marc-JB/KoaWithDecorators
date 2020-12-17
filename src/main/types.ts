@@ -1,8 +1,19 @@
+export interface Parameter {
+    type: "context" | "next" | "params" | "request" | "response" | "body" | "queries" | "headers"
+}
+
+export interface IndexableParameter {
+    type: "query" | "header" | "param"
+    name: string
+}
+
 export interface Route {
     method?: string
     path?: string
-    defaultStatusCode?: number
+    defaultStatusCode?: number | "auto"
     cachedFor?: number
+    download?: boolean | string
+    params?: Map<number, Parameter | IndexableParameter>
 }
 
 export type ConstructorType<T extends Object> = new (...args: any[]) => T
@@ -18,7 +29,7 @@ export type Endpoint<
 
 export type FunctionKeysInt<
     T extends new (...args: any[]) => Object, 
-    R extends InferConstructorType<T>
+    R extends InferConstructorType<T> = InferConstructorType<T>
 > = { [K in keyof R]: R[K] extends (...args: any[]) => any ? K : never }[keyof R]
 
-export type FunctionKeys<T extends new (...args: any[]) => Object> = FunctionKeysInt<T, InferConstructorType<T>>
+export type FunctionKeys<T extends new (...args: any[]) => Object> = FunctionKeysInt<T>

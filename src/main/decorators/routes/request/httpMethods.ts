@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { addRouteMetadataToEndpoint, getEndpoint } from "../core"
-import { FunctionKeys } from "../types"
+import { getEndpoint } from "../../../core/getEndpoint"
+import { addRouteMetadataToEndpoint } from "../../../core/addRouteMetadataToEndpoint"
+import { FunctionKeys } from "../../../types"
 
 const HttpMethod = (name: string): MethodDecorator => (target, propertyKey, _): void => {
     addRouteMetadataToEndpoint(

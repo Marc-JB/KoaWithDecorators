@@ -1,39 +1,28 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import Router from "@koa/router"
-import { addRoutesToRouter, getEndpoint } from "./core"
+import { getEndpoint } from "./core/getEndpoint"
+import { addRoutesToRouter } from "./core/addRoutesToRouter"
 import { Route, InferConstructorType, FunctionKeys } from "./types"
 
-export * from "./decorators/httpMethods"
-export * from "./decorators/path"
-export * from "./decorators/statusCode"
-export * from "./decorators/cache"
-
-interface ControllerDecoratorType {
-    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    (name: string): (<TFunction extends Function>(target: TFunction) => TFunction | void)
-
-    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    <TFunction extends Function>(target: TFunction): TFunction | void
-}
-
-export const Controller: ControllerDecoratorType = (nameOrConstructor: any): any => {
-    if (typeof nameOrConstructor === "string") {
-        return (constructor: any): void => {
-            getEndpoint(constructor).path = nameOrConstructor
-        }
-    } else getEndpoint(nameOrConstructor).path = "/"
-}
-
-/** @deprecated use Controller */
-export const ApiController = Controller
-
-/** @deprecated use Controller */
-export const Endpoint = Controller
+export * from "./decorators/routes/request/httpMethods"
+export * from "./decorators/routes/request/path"
+export * from "./decorators/routes/response/statusCode"
+export * from "./decorators/routes/response/download"
+export * from "./decorators/routes/response/cache"
+export * from "./decorators/routes/params/body"
+export * from "./decorators/routes/params/context"
+export * from "./decorators/routes/params/header"
+export * from "./decorators/routes/params/headers"
+export * from "./decorators/routes/params/next"
+export * from "./decorators/routes/params/params"
+export * from "./decorators/routes/params/query"
+export * from "./decorators/routes/params/request"
+export * from "./decorators/routes/params/response"
+export * from "./decorators/routes/params/param"
+export * from "./decorators/class/controller"
 
 export const createRouter = <
-    T extends new (...args: any[]) => Object, 
-    R extends InferConstructorType<T>
->(instance: R): Router => {
+    T extends new (...args: any[]) => Object
+>(instance: InferConstructorType<T>): Router => {
     const endpoint = getEndpoint<T>(instance.constructor)
     const path = endpoint.path ?? "/"
     const router = new Router({
