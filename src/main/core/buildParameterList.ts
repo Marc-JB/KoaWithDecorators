@@ -64,7 +64,11 @@ export function buildParameterList(
                     let authObj: AuthenticationType | null = null
                     if (typeof authHeader === "string") {
                         if (authHeader.startsWith("Basic ")) {
-                            authObj = new BasicAuth(authHeader.replace("Basic ", ""))
+                            try {
+                                authObj = new BasicAuth(authHeader.replace("Basic ", ""))
+                            } catch (error) {
+                                // Invalid authentication
+                            }
                         } else if (authHeader.startsWith("Bearer ")) {
                             authObj = new BearerToken(authHeader.replace("Bearer ", ""))
                         }
