@@ -1,5 +1,6 @@
 import Router from "@koa/router"
 import { Next } from "koa"
+import { AuthenticationType, BasicAuth, BearerToken } from "../authentication"
 import { IndexableParameter, Parameter } from "../types"
 
 export function buildParameterList(
@@ -56,6 +57,28 @@ export function buildParameterList(
                 }
                 case "param": {
                     paramsList[index] = context.params[param.name]
+                    break
+                }
+                case "auth": {
+                    const authHeader = context.request.get("Authorization")
+                    let authObj: AuthenticationType | null = null
+                    if (typeof authHeader === "string") {
+                        if (authHeader.startsWith("Basic ")) {
+                            authObj = new BasicAuth(authHeader.replace("Basic ", ""))
+                        } else if (authHeader.startsWith("Bearer ")) {
+                            authObj = new BearerToken(authHeader.replace("Bearer ", ""))
+                        }
+                    }
+                    paramsList[index] = authObj
+                    break
+                }
+                case "bearer": {
+                    const authHeader = context.request.get("Authorization")
+                    let token: string | null = null
+                    if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
+                        token = authHeader.replace("Bearer ", "")
+                    }
+                    paramsList[index] = token
                     break
                 }
                 default: {
