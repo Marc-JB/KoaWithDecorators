@@ -8,6 +8,7 @@ export * from "./decorators/routes/request/path"
 export * from "./decorators/routes/response/statusCode"
 export * from "./decorators/routes/response/download"
 export * from "./decorators/routes/response/cache"
+export * from "./decorators/routes/response/redirect"
 export * from "./decorators/routes/params/body"
 export * from "./decorators/routes/params/context"
 export * from "./decorators/routes/params/header"
@@ -18,7 +19,10 @@ export * from "./decorators/routes/params/query"
 export * from "./decorators/routes/params/request"
 export * from "./decorators/routes/params/response"
 export * from "./decorators/routes/params/param"
+export * from "./decorators/routes/params/auth"
 export * from "./decorators/class/controller"
+export * from "./HttpStatusCodes"
+export * from "./authentication"
 
 export const createRouter = <
     T extends new (...args: any[]) => Object

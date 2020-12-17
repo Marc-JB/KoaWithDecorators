@@ -1,5 +1,5 @@
 export interface Parameter {
-    type: "context" | "next" | "params" | "request" | "response" | "body" | "queries" | "headers"
+    type: "context" | "next" | "params" | "request" | "response" | "body" | "queries" | "headers" | "auth" | "bearer"
 }
 
 export interface IndexableParameter {
@@ -13,6 +13,7 @@ export interface Route {
     defaultStatusCode?: number | "auto"
     cachedFor?: number
     download?: boolean | string
+    redirect?: { location: string; isPermanent: boolean }
     params?: Map<number, Parameter | IndexableParameter>
 }
 

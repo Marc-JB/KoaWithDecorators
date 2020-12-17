@@ -1,4 +1,5 @@
 import Router from "@koa/router"
+import { HttpStatusCodes } from "../HttpStatusCodes"
 import { InferConstructorType, Route, FunctionKeys, Parameter, IndexableParameter } from "../types"
 import { buildParameterList } from "./buildParameterList"
 
@@ -16,6 +17,7 @@ export function addRouteToRouter<
         defaultStatusCode = null,
         cachedFor = null,
         download = false,
+        redirect = null,
         params = new Map<number, Parameter | IndexableParameter>()
     } = routeOpts
 
@@ -35,26 +37,30 @@ export function addRouteToRouter<
             context.response.set("Content-Disposition", "attachment" + typeof download === "string" ? ` filename="${download}"` : "")
         }
 
+        if (redirect !== null) {
+            context.response.set("Location", redirect.location)
+            context.response.status = redirect.isPermanent ? HttpStatusCodes.PermanentRedirect : HttpStatusCodes.TemporaryRedirect
+        }
+
         const paramsList = buildParameterList(params, context, next)
 
         try {
             // @ts-expect-error
             const response = await instance[routeId](...paramsList)
 
-            if (defaultStatusCode === "auto") {
+            if (defaultStatusCode === "auto" && redirect === null) {
                 if (method === "POST")
-                    context.response.status = 201
+                    context.response.status = HttpStatusCodes.Created
                 else if (response === null || response === undefined)
-                    context.response.status = 204
-
+                    context.response.status = HttpStatusCodes.NoContent
                 else
-                    context.response.status = 200
+                    context.response.status = HttpStatusCodes.OK
             }
 
             return response
         } catch (error) {
             if (defaultStatusCode === "auto")
-                context.response.status = 500
+                context.response.status = HttpStatusCodes.InternalServerError
 
             throw error
         }
