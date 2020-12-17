@@ -8,12 +8,21 @@ export * from "./decorators/routes/request/path"
 export * from "./decorators/routes/response/statusCode"
 export * from "./decorators/routes/response/download"
 export * from "./decorators/routes/response/cache"
+export * from "./decorators/routes/params/body"
+export * from "./decorators/routes/params/context"
+export * from "./decorators/routes/params/header"
+export * from "./decorators/routes/params/headers"
+export * from "./decorators/routes/params/next"
+export * from "./decorators/routes/params/params"
+export * from "./decorators/routes/params/query"
+export * from "./decorators/routes/params/request"
+export * from "./decorators/routes/params/response"
+export * from "./decorators/routes/params/param"
 export * from "./decorators/class/controller"
 
 export const createRouter = <
-    T extends new (...args: any[]) => Object, 
-    R extends InferConstructorType<T>
->(instance: R): Router => {
+    T extends new (...args: any[]) => Object
+>(instance: InferConstructorType<T>): Router => {
     const endpoint = getEndpoint<T>(instance.constructor)
     const path = endpoint.path ?? "/"
     const router = new Router({
