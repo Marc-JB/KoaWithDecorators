@@ -23,7 +23,7 @@ decorator | type | required | aliases | description
 @HttpHead | method | yes | @HEAD | Listen for HTTP HEAD requests
 @HttpAll | method | only if @Path is not set |  | Listen for all HTTP requests
 @Path(path: string) | method | no (default path is `/`) |  | Attaches the method to the specified path
-@Controller(path: string) | class | no (default path is `/`) | @ApiController(path: string) | Adds a prefix to all paths in this method
+@Controller(path: string) | class | no (default path is `/`) |  | Adds a prefix to all paths in this method
 
 ## Demo
 ```TypeScript
