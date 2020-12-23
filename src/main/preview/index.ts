@@ -30,6 +30,7 @@ export function getOpenApiPathsJson<
         }
 
         const spec: {[key: string]: any} = {
+            tags: [ instance.name ],
             summary: `${instance.name}.${id}`,
             operationId: `${instance.name}.${id}`,
             responses: {}
@@ -55,21 +56,27 @@ export function getOpenApiPathsJson<
                     in: "path",
                     name: param.name,
                     required: true,
-                    type: "string"
+                    schema: {
+                        type: "string"
+                    }
                 })
             } else if (param.type === "header") {
                 spec.parameters = spec.parameters ?? []
                 spec.parameters.push({
                     in: "header",
                     name: param.name,
-                    type: "string"
+                    schema: {
+                        type: "string"
+                    }
                 })
             } else if (param.type === "query") {
                 spec.parameters = spec.parameters ?? []
                 spec.parameters.push({
                     in: "query",
                     name: param.name,
-                    type: "string"
+                    schema: {
+                        type: "string"
+                    }
                 })
             } else if (param.type === "bearer") {
                 spec.security = [
