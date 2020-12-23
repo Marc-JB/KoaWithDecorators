@@ -95,7 +95,7 @@ jobs:
           cat package.json | sed -i -e 's/"name": "\([a-z0-9-]*\)"/"name": "@peregrine\/\1"/' package.json
 
       - name: Publish project to npm
-        run: yarn publish --access public --tag dev
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -143,6 +143,6 @@ jobs:
           cat package.json | sed -i -e 's/"name": "\([a-z0-9-]*\)"/"name": "@marc-jb\/\1"/' package.json
 
       - name: Publish project to GitHub Packages
-        run: yarn publish --access public --tag dev
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
