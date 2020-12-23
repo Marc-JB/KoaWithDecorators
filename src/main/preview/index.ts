@@ -1,6 +1,6 @@
 import { getEndpoint } from "../core/getEndpoint"
 import { HttpStatusCodes } from "../HttpStatusCodes"
-import { IndexableParameter, InferConstructorType, Parameter } from "../types"
+import { IndexableParameter, Parameter } from "../types"
 
 function removeSurroundings(str: string, char: string): string {
     if (str.startsWith(char)) str = str.substr(char.length)
@@ -10,8 +10,8 @@ function removeSurroundings(str: string, char: string): string {
 
 export function getOpenApiPathsJson<
     T extends new (...args: any[]) => Object
->(instance: InferConstructorType<T>): any {
-    const endpoint = getEndpoint<T>(instance.constructor)
+>(instance: T): any {
+    const endpoint = getEndpoint<T>(instance)
     const basePath = removeSurroundings(endpoint.path ?? "/", "/")
         .split("/")
         .filter(it => it !== "")
@@ -30,8 +30,8 @@ export function getOpenApiPathsJson<
         }
 
         const spec: {[key: string]: any} = {
-            summary: `${instance.constructor.name}.${id}`,
-            operationId: `${instance.constructor.name}.${id}`,
+            summary: `${instance.name}.${id}`,
+            operationId: `${instance.name}.${id}`,
             responses: {}
         }
 
@@ -51,7 +51,7 @@ export function getOpenApiPathsJson<
                 }
             } else if (param.type === "param") {
                 spec.parameters = spec.parameters ?? []
-                spec.parameters.add({
+                spec.parameters.push({
                     in: "path",
                     name: param.name,
                     required: true,
@@ -59,27 +59,27 @@ export function getOpenApiPathsJson<
                 })
             } else if (param.type === "header") {
                 spec.parameters = spec.parameters ?? []
-                spec.parameters.add({
+                spec.parameters.push({
                     in: "header",
                     name: param.name,
                     type: "string"
                 })
             } else if (param.type === "query") {
                 spec.parameters = spec.parameters ?? []
-                spec.parameters.add({
+                spec.parameters.push({
                     in: "query",
                     name: param.name,
                     type: "string"
                 })
             } else if (param.type === "bearer") {
-                spec.security = {
-                    "bearerAuth": []
-                }
+                spec.security = [
+                    { "bearerAuth": [] }
+                ]
             } else if (param.type === "auth") {
-                spec.security = {
-                    "bearerAuth": [],
-                    "basicAuth": []
-                }
+                spec.security = [
+                    { "bearerAuth": [] },
+                    { "basicAuth": [] }
+                ]
             }
         }
 
