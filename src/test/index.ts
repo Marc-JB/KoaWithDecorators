@@ -1,6 +1,7 @@
 import { suite, test, expect } from "@peregrine/test-with-decorators"
-import { HttpGet, Path, Controller, createRouter } from "../main/index"
+import { HttpGet, Path, Controller, createRouter, attachRoutesToRouter } from "../main/index"
 import { Context } from "koa"
+import Router from "@koa/router"
 
 interface Pet {
     id: number
@@ -54,6 +55,21 @@ export class MainTests {
 
         // Act
         const petsRouter = createRouter(instance)
+
+        // Assert
+        expect(petsRouter.stack).to.have.lengthOf(2)
+        const s = petsRouter.stack.map(it => `${it.methods.join(", ")} - ${it.path}`)
+        expect(s).to.include("HEAD, GET - /pets")
+        expect(s).to.include("HEAD, GET - /pets/:id")
+    }
+
+    @test
+    public testRouterAttachement(): void {
+        // Arrange
+        const instance = new PetsController(myPets)
+
+        // Act
+        const petsRouter = attachRoutesToRouter(instance, new Router())
 
         // Assert
         expect(petsRouter.stack).to.have.lengthOf(2)

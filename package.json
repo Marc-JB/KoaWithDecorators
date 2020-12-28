@@ -1,6 +1,6 @@
 {
     "name": "koa-with-decorators",
-    "version": "0.9.8",
+    "version": "0.9.9",
     "description": "Library for using Koa with decorators",
     "private": false,
     "type": "commonjs",
