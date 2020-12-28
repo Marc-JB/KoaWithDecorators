@@ -1,30 +1,20 @@
+import { constructPath } from "../constructPath"
 import { getEndpoint } from "../core/getEndpoint"
 import { HttpStatusCodes } from "../HttpStatusCodes"
 import { IndexableParameter, Parameter } from "../types"
-
-function removeSurroundings(str: string, char: string): string {
-    if (str.startsWith(char)) str = str.substr(char.length)
-    if (str.endsWith(char)) str = str.substr(0, str.length - char.length)
-    return str
-}
 
 export function getOpenApiPathsJson<
     T extends new (...args: any[]) => Object
 >(instance: T): any {
     const endpoint = getEndpoint<T>(instance)
-    const basePath = removeSurroundings(endpoint.path ?? "/", "/")
-        .split("/")
-        .filter(it => it !== "")
-        .map(it => it.startsWith(":") ? `{${it.substr(1)}}` : it)
     const paths: {[key: string]: any} = {}
 
     for (const [id, route] of endpoint.routes ?? []) {
-        const routePath = removeSurroundings(route.path ?? "/", "/")
+        const path = constructPath(endpoint.path ?? null, route.path ?? "/")
+        const url = path
             .split("/")
-            .filter(it => it !== "")
             .map(it => it.startsWith(":") ? `{${it.substr(1)}}` : it)
-        const path = [...basePath, ...routePath]
-        const url = "/" + path.join("/")
+            .join("/")
         if (!(url in paths)) {
             paths[url] = {}
         }

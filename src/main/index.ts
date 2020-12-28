@@ -36,3 +36,13 @@ export const createRouter = <
 
     return addRoutesToRouter(router, routes, instance)
 }
+
+export const attachRoutesToRouter = <
+    T extends new (...args: any[]) => Object
+>(instance: InferConstructorType<T>, router: Router): Router => {
+    const endpoint = getEndpoint<T>(instance.constructor)
+    const path = endpoint.path ?? "/"
+    const routes = endpoint.routes ?? new Map<FunctionKeys<T>, Route>()
+
+    return addRoutesToRouter(router, routes, instance, path.startsWith("/") ? path : "/" + path)
+}

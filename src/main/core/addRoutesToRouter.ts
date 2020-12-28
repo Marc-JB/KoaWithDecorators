@@ -7,10 +7,11 @@ export function addRoutesToRouter<
 >(
     router: Router, 
     routes: Map<FunctionKeys<T>, Route>, 
-    instance: InferConstructorType<T>
+    instance: InferConstructorType<T>,
+    prefix: string | null = null
 ): Router {
     for (const [id, options] of routes) {
-        addRouteToRouter(router, id, options, instance)
+        addRouteToRouter(router, id, options, instance, prefix)
     }
 
     return router

@@ -1,4 +1,5 @@
 import Router from "@koa/router"
+import { constructPath } from "../constructPath"
 import { HttpStatusCodes } from "../HttpStatusCodes"
 import { InferConstructorType, Route, FunctionKeys, Parameter, IndexableParameter } from "../types"
 import { buildParameterList } from "./buildParameterList"
@@ -9,7 +10,8 @@ export function addRouteToRouter<
     router: Router,
     routeId: FunctionKeys<T>,
     routeOpts: Route,
-    instance: InferConstructorType<T>
+    instance: InferConstructorType<T>,
+    prefix: string | null = null
 ): void {
     const {
         path = "/",
@@ -66,41 +68,43 @@ export function addRouteToRouter<
         }
     }
 
+    const pathWithPrefix = constructPath(prefix, path)
+
     switch (method) {
         case "GET": {
-            router.get(path, func)
+            router.get(pathWithPrefix, func)
             break
         }
         case "POST": {
-            router.post(path, func)
+            router.post(pathWithPrefix, func)
             break
         }
         case "PUT": {
-            router.put(path, func)
+            router.put(pathWithPrefix, func)
             break
         }
         case "PATCH": {
-            router.patch(path, func)
+            router.patch(pathWithPrefix, func)
             break
         }
         case "DELETE": {
-            router.delete(path, func)
+            router.delete(pathWithPrefix, func)
             break
         }
         case "OPTIONS": {
-            router.options(path, func)
+            router.options(pathWithPrefix, func)
             break
         }
         case "HEAD": {
-            router.head(path, func)
+            router.head(pathWithPrefix, func)
             break
         }
         case "*": {
-            router.all(path, func)
+            router.all(pathWithPrefix, func)
             break
         }
         default: {
-            throw new Error(`${routeId.toString()} | ${path}: Method ${method} not supported`)
+            throw new Error(`${routeId.toString()} | ${pathWithPrefix}: Method ${method} not supported`)
         }
     }
 }
